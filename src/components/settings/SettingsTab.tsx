@@ -4,7 +4,12 @@ import { Save, Download, Trash2, Database, HardDrive } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 export function SettingsTab() {
-  const { settings, updateSettings, clearAll, transactions, tasks, rewards } = useStore();
+  const settings = useStore(s => s.settings);
+  const updateSettings = useStore(s => s.updateSettings);
+  const clearAll = useStore(s => s.clearAll);
+  const transactions = useStore(s => s.transactions);
+  const tasks = useStore(s => s.tasks);
+  const rewards = useStore(s => s.rewards);
   const [dailyGoal, setDailyGoal] = useState(settings.daily_goal.toString());
   const [currencyName, setCurrencyName] = useState(settings.currency_name);
   const [showConfirm, setShowConfirm] = useState(false);

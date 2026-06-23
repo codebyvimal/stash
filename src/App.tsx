@@ -19,7 +19,7 @@ import { useStore } from './hooks/useStore';
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const { session, loading, isSupabaseConfigured } = useAuth();
-  const { initFromSupabase } = useStore();
+  const initFromSupabase = useStore(s => s.initFromSupabase);
 
   useEffect(() => {
     if (session) {

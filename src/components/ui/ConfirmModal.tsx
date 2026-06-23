@@ -4,7 +4,7 @@ import { AlertCircle, X } from 'lucide-react';
 interface ConfirmModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm?: () => void;
   title: string;
   message: React.ReactNode;
   confirmText?: string;
@@ -64,15 +64,17 @@ export function ConfirmModal({
                 >
                   {cancelText}
                 </button>
-                <button
-                  onClick={() => {
-                    onConfirm();
-                    onClose();
-                  }}
-                  className="flex-1 px-4 py-2.5 rounded-xl font-bold text-white bg-amber-500 hover:bg-amber-600 shadow-md shadow-amber-500/20 transition-all active:scale-95"
-                >
-                  {confirmText}
-                </button>
+                {onConfirm && (
+                  <button
+                    onClick={() => {
+                      onConfirm();
+                      onClose();
+                    }}
+                    className="flex-1 px-4 py-2.5 rounded-xl font-bold text-white bg-amber-500 hover:bg-amber-600 shadow-md shadow-amber-500/20 transition-all active:scale-95"
+                  >
+                    {confirmText}
+                  </button>
+                )}
               </div>
             </div>
           </motion.div>

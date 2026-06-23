@@ -1,17 +1,22 @@
 import { renderHook, act } from '@testing-library/react';
-import { useStore, useStoreBase } from './useStore';
+import { useStore, useBalance, useDailyEarned } from './useStore';
 import { beforeEach, describe, it, expect } from 'vitest';
 
 describe('useStore', () => {
   beforeEach(() => {
     localStorage.clear();
     act(() => {
-      useStoreBase.getState().clearAll();
+      useStore.getState().clearAll();
     });
   });
 
   it('should initialize with empty data if localStorage is empty', () => {
-    const { result } = renderHook(() => useStore());
+    const { result } = renderHook(() => {
+      const store = useStore();
+      const balance = useBalance();
+      const dailyEarned = useDailyEarned();
+      return { ...store, balance, dailyEarned };
+    });
     expect(result.current.transactions.length).toBe(3);
     expect(result.current.rewards.length).toBe(6);
     expect(result.current.settings).toEqual({ daily_goal: 500, currency_name: 'pts' });
@@ -20,7 +25,12 @@ describe('useStore', () => {
   });
 
   it('should add a transaction and update balance and dailyEarned', () => {
-    const { result } = renderHook(() => useStore());
+    const { result } = renderHook(() => {
+      const store = useStore();
+      const balance = useBalance();
+      const dailyEarned = useDailyEarned();
+      return { ...store, balance, dailyEarned };
+    });
     act(() => {
       result.current.addTransaction({
         title: 'Test earn',
@@ -38,7 +48,12 @@ describe('useStore', () => {
   });
 
   it('should add a reward', () => {
-    const { result } = renderHook(() => useStore());
+    const { result } = renderHook(() => {
+      const store = useStore();
+      const balance = useBalance();
+      const dailyEarned = useDailyEarned();
+      return { ...store, balance, dailyEarned };
+    });
     act(() => {
       result.current.addReward({
         title: 'Test Reward',
@@ -54,7 +69,12 @@ describe('useStore', () => {
   });
 
   it('should claim a reward, deduct from balance and add a spend transaction', () => {
-    const { result } = renderHook(() => useStore());
+    const { result } = renderHook(() => {
+      const store = useStore();
+      const balance = useBalance();
+      const dailyEarned = useDailyEarned();
+      return { ...store, balance, dailyEarned };
+    });
     
     // First earn some points
     act(() => {

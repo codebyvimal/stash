@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Gamepad2, Play, Package } from 'lucide-react';
-import { useStore } from '../../hooks/useStore';
+import { useStore, useBalance } from '../../hooks/useStore';
 import { useMemo } from 'react';
 
 interface RewardPreviewProps {
@@ -8,7 +8,10 @@ interface RewardPreviewProps {
 }
 
 export function RewardPreview({ onViewCatalog }: RewardPreviewProps) {
-  const { rewards, balance, claimReward, transactions } = useStore();
+  const rewards = useStore(s => s.rewards);
+  const balance = useBalance();
+  const claimReward = useStore(s => s.claimReward);
+  const transactions = useStore(s => s.transactions);
 
   const previewRewards = useMemo(() => {
     const claimedRewardIds = new Set(

@@ -4,7 +4,7 @@ import { useStore } from '../../hooks/useStore';
 import { cn } from '../../lib/utils';
 
 export function ActivityList() {
-  const { transactions } = useStore();
+  const transactions = useStore(s => s.transactions);
 
   const recentActivity = [...transactions].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 3);
 

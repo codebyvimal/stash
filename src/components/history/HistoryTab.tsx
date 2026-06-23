@@ -9,7 +9,9 @@ import type { HistoryItem } from './TransactionCard';
 type FilterType = 'all' | 'earn' | 'spend';
 
 export function HistoryTab() {
-  const { transactions, tasks, settings } = useStore();
+  const transactions = useStore(s => s.transactions);
+  const tasks = useStore(s => s.tasks);
+  const settings = useStore(s => s.settings);
   const [filter, setFilter] = useState<FilterType>('all');
 
   const groupedTransactions = useMemo(() => {

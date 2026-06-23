@@ -22,7 +22,9 @@ function TimeToCredit({ task }: { task: Task }) {
 }
 
 export function TaskList() {
-  const { tasks, completeTask, deleteTask } = useStore();
+  const tasks = useStore(s => s.tasks);
+  const completeTask = useStore(s => s.completeTask);
+  const deleteTask = useStore(s => s.deleteTask);
   const [confirmingTask, setConfirmingTask] = useState<Task | null>(null);
 
   const pendingTasks = tasks.filter(t => t.status === 'pending');
@@ -118,23 +120,18 @@ export function TaskList() {
       <ConfirmModal
         isOpen={!!confirmingTask}
         onClose={() => setConfirmingTask(null)}
-        onConfirm={() => {
-          if (confirmingTask) completeTask(confirmingTask.id);
-        }}
-        title="Early Completion"
+        title="Cooldown Active"
         message={
           confirmingTask ? (
             <span>
-              You can only get balance after 6 hours from creation. Balance will be credited at{' '}
+              You must wait 6 hours after creating a task before you can complete it. It will unlock at{' '}
               <strong>
                 {new Date(new Date(confirmingTask.created_at).getTime() + 6 * 60 * 60 * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </strong>.
-              <br />
-              <br />
-              Proceed to mark as completed?
             </span>
           ) : null
         }
+        cancelText="Got it"
       />
     </motion.section>
   );
@@ -218,12 +215,14 @@ function TaskRow({ task, onComplete, onDelete }: {
         )}>
           +{task.pts}
         </span>
-        <button
-          onClick={onDelete}
-          className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-rose-50 text-slate-300 hover:text-rose-400 transition-all"
-        >
-          <Trash2 className="w-3.5 h-3.5" />
-        </button>
+        { !credited && (
+          <button
+            onClick={onDelete}
+            className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-rose-50 text-slate-300 hover:text-rose-400 transition-all"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
+        )}
       </div>
     </motion.div>
   );
@@ -291,12 +290,14 @@ function TaskRowMobile({ task, onComplete, onDelete }: {
         )}>
           +{task.pts}
         </span>
-        <button
-          onClick={onDelete}
-          className="p-1 rounded-lg text-slate-300 hover:text-rose-400 transition-colors"
-        >
-          <Trash2 className="w-3 h-3" />
-        </button>
+        { !credited && (
+          <button
+            onClick={onDelete}
+            className="p-1 rounded-lg text-slate-300 hover:text-rose-400 transition-colors"
+          >
+            <Trash2 className="w-3 h-3" />
+          </button>
+        )}
       </div>
     </motion.div>
   );

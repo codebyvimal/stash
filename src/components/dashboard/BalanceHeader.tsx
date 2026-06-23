@@ -1,10 +1,13 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Clock } from 'lucide-react';
-import { useStore } from '../../hooks/useStore';
+import { useStore, useBalance, usePendingPts, useDailyEarned } from '../../hooks/useStore';
 import { cn } from '../../lib/utils';
 
 export function BalanceHeader() {
-  const { balance, pendingPts, dailyEarned, settings } = useStore();
+  const balance = useBalance();
+  const pendingPts = usePendingPts();
+  const dailyEarned = useDailyEarned();
+  const settings = useStore(s => s.settings);
 
   const goal = settings.daily_goal;
   const progressPercent = Math.min((dailyEarned / goal) * 100, 100);

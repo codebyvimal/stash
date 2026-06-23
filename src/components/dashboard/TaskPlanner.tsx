@@ -7,7 +7,7 @@ export function TaskPlanner() {
   const [title, setTitle] = useState('');
   const [pts, setPts] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const { addTask } = useStore();
+  const addTask = useStore(s => s.addTask);
 
   const handleAdd = () => {
     const trimmed = title.trim();

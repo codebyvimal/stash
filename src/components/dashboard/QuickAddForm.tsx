@@ -6,7 +6,7 @@ import { useStore } from '../../hooks/useStore';
 export function QuickAddForm() {
   const [inputValue, setInputValue] = useState('');
   const [ptsValue, setPtsValue] = useState('');
-  const { addTransaction } = useStore();
+  const addTransaction = useStore(s => s.addTransaction);
 
   const handleAddPts = () => {
     if (ptsValue) {

@@ -8,12 +8,19 @@ const pushToSupabase = async (table: string, data: any) => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return;
   
-  // Remove fields that shouldn't be synced or let Supabase handle them
   const { is_repeatable, ...payload } = data;
+  
+  if (!navigator.onLine) {
+    useStore.getState().addToSyncQueue({ action: 'upsert', table, data: payload });
+    return;
+  }
+
   try {
-    await supabase.from(table).upsert({ ...payload, user_id: user.id });
+    const { error } = await supabase.from(table).upsert({ ...payload, user_id: user.id });
+    if (error) throw error;
   } catch (e) {
     console.error(e);
+    useStore.getState().addToSyncQueue({ action: 'upsert', table, data: payload });
   }
 };
 
@@ -21,10 +28,18 @@ const deleteFromSupabase = async (table: string, id: string) => {
   if (!supabase) return;
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return;
+
+  if (!navigator.onLine) {
+    useStore.getState().addToSyncQueue({ action: 'delete', table, id });
+    return;
+  }
+
   try {
-    await supabase.from(table).delete().match({ id, user_id: user.id });
+    const { error } = await supabase.from(table).delete().match({ id, user_id: user.id });
+    if (error) throw error;
   } catch (e) {
     console.error(e);
+    useStore.getState().addToSyncQueue({ action: 'delete', table, id });
   }
 };
 
@@ -33,6 +48,7 @@ interface StoreData {
   tasks: Task[];
   rewards: Reward[];
   settings: Settings;
+  syncQueue: any[];
   _tick: number;
 }
 
@@ -48,6 +64,8 @@ interface StoreActions {
   updateSettings: (s: Partial<Settings>) => void;
   clearAll: () => void;
   initFromSupabase: () => Promise<void>;
+  addToSyncQueue: (action: any) => void;
+  processSyncQueue: () => Promise<void>;
 }
 
 const DEFAULT_SETTINGS: Settings = {
@@ -61,7 +79,8 @@ const DEFAULT_DATA: Omit<StoreData, '_tick'> = {
   transactions: [],
   tasks: [],
   rewards: DEFAULT_REWARDS,
-  settings: DEFAULT_SETTINGS
+  settings: DEFAULT_SETTINGS,
+  syncQueue: []
 };
 
 const SIX_HOURS_MS = 6 * 60 * 60 * 1000;
@@ -79,7 +98,7 @@ export function isCredited(task: Task): boolean {
   return new Date(getCreditTime(task)).getTime() <= Date.now();
 }
 
-export const useStoreBase = create<StoreData & StoreActions>()(
+export const useStore = create<StoreData & StoreActions>()(
   persist(
     (set, get) => ({
       ...DEFAULT_DATA,
@@ -107,6 +126,10 @@ export const useStoreBase = create<StoreData & StoreActions>()(
         });
       },
       deleteTask: (taskId) => {
+        const state = get();
+        const taskToDelete = state.tasks.find(t => t.id === taskId);
+        if (taskToDelete && isCredited(taskToDelete)) return;
+
         set(state => ({
           tasks: state.tasks.filter(t => t.id !== taskId)
         }));
@@ -144,7 +167,7 @@ export const useStoreBase = create<StoreData & StoreActions>()(
         }));
         deleteFromSupabase('rewards', id);
       },
-      claimReward: (rewardId) => {
+      claimReward: async (rewardId) => {
         const state = get();
         const reward = state.rewards.find(r => r.id === rewardId);
         if (!reward) return;
@@ -158,8 +181,22 @@ export const useStoreBase = create<StoreData & StoreActions>()(
           id: crypto.randomUUID(),
           created_at: new Date().toISOString()
         };
+        
+        // Optimistic update
         set(state => ({ transactions: [...state.transactions, newTx] }));
-        pushToSupabase('transactions', newTx);
+
+        if (supabase) {
+          if (!navigator.onLine) {
+            get().addToSyncQueue({ action: 'rpc', fn: 'claim_reward', args: { r_id: rewardId, tx_id: newTx.id } });
+          } else {
+            const { error } = await supabase.rpc('claim_reward', { r_id: rewardId, tx_id: newTx.id });
+            if (error) {
+              console.error("Failed to claim reward:", error);
+              // Revert on error
+              set(state => ({ transactions: state.transactions.filter(t => t.id !== newTx.id) }));
+            }
+          }
+        }
       },
       updateSettings: (s) => {
         set(state => ({
@@ -169,10 +206,36 @@ export const useStoreBase = create<StoreData & StoreActions>()(
       clearAll: () => {
         set({ ...DEFAULT_DATA, _tick: Date.now() });
       },
+      addToSyncQueue: (action) => {
+        set(state => ({ syncQueue: [...state.syncQueue, action] }));
+      },
+      processSyncQueue: async () => {
+        const state = get();
+        if (!supabase || state.syncQueue.length === 0 || !navigator.onLine) return;
+        
+        const queue = [...state.syncQueue];
+        set({ syncQueue: [] });
+
+        for (const item of queue) {
+           try {
+             if (item.action === 'upsert') {
+                await pushToSupabase(item.table, item.data);
+             } else if (item.action === 'delete') {
+                await deleteFromSupabase(item.table, item.id);
+             } else if (item.action === 'rpc') {
+                await supabase.rpc(item.fn, item.args);
+             }
+           } catch(e) {
+             get().addToSyncQueue(item);
+           }
+        }
+      },
       initFromSupabase: async () => {
         if (!supabase) return;
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
+        
+        await get().processSyncQueue();
         
         try {
           const [tasksRes, rewardsRes, txsRes] = await Promise.all([
@@ -207,44 +270,43 @@ export const useStoreBase = create<StoreData & StoreActions>()(
 // Global tick to update computed values (like isCredited) without multiple intervals
 if (typeof window !== 'undefined') {
   setInterval(() => {
-    useStoreBase.setState({ _tick: Date.now() });
+    useStore.setState({ _tick: Date.now() });
   }, 60 * 1000);
 }
 
-// Wrapper to maintain exact same API as before
-export function useStore() {
-  const store = useStoreBase();
+export function useBalance() {
+  return useStore(store => {
+    const creditedTaskPts = store.tasks
+      .filter(isCredited)
+      .reduce((acc, t) => acc + t.pts, 0);
 
-  const creditedTaskPts = store.tasks
-    .filter(isCredited)
-    .reduce((acc, t) => acc + t.pts, 0);
+    return store.transactions.reduce((acc, t) =>
+      t.type === 'earn' ? acc + t.pts : acc - t.pts, 0
+    ) + creditedTaskPts;
+  });
+}
 
-  const balance = store.transactions.reduce((acc, t) =>
-    t.type === 'earn' ? acc + t.pts : acc - t.pts, 0
-  ) + creditedTaskPts;
-
-  const pendingPts = store.tasks
+export function usePendingPts() {
+  return useStore(store => store.tasks
     .filter(t => t.status === 'completed' && t.completed_at && !isCredited(t))
-    .reduce((acc, t) => acc + t.pts, 0);
-
-  const isToday = (date: Date) => {
-    const today = new Date();
-    return date.getDate() === today.getDate() &&
-      date.getMonth() === today.getMonth() &&
-      date.getFullYear() === today.getFullYear();
-  };
-
-  const dailyEarned = store.transactions
-    .filter(t => t.type === 'earn' && isToday(new Date(t.created_at)))
     .reduce((acc, t) => acc + t.pts, 0)
-  + store.tasks
-    .filter(t => isCredited(t) && isToday(new Date(t.completed_at!)))
-    .reduce((acc, t) => acc + t.pts, 0);
+  );
+}
 
-  return {
-    ...store,
-    balance,
-    pendingPts,
-    dailyEarned
-  };
+export function useDailyEarned() {
+  return useStore(store => {
+    const isToday = (date: Date) => {
+      const today = new Date();
+      return date.getDate() === today.getDate() &&
+        date.getMonth() === today.getMonth() &&
+        date.getFullYear() === today.getFullYear();
+    };
+
+    return store.transactions
+      .filter(t => t.type === 'earn' && isToday(new Date(t.created_at)))
+      .reduce((acc, t) => acc + t.pts, 0)
+    + store.tasks
+      .filter(t => isCredited(t) && isToday(new Date(t.completed_at!)))
+      .reduce((acc, t) => acc + t.pts, 0);
+  });
 }

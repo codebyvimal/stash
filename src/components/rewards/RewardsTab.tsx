@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useStore } from '../../hooks/useStore';
+import { useStore, useBalance } from '../../hooks/useStore';
 import { RewardCard } from './RewardCard';
 import { ClaimModal } from './ClaimModal';
 import { AddRewardModal } from './AddRewardModal';
@@ -10,7 +10,14 @@ import { motion } from 'framer-motion';
 import { Gift, Plus, Archive, ChevronDown, ChevronUp } from 'lucide-react';
 
 export function RewardsTab() {
-  const { rewards, balance, settings, claimReward, addReward, updateReward, deleteReward, transactions } = useStore();
+  const rewards = useStore(s => s.rewards);
+  const balance = useBalance();
+  const settings = useStore(s => s.settings);
+  const claimReward = useStore(s => s.claimReward);
+  const addReward = useStore(s => s.addReward);
+  const updateReward = useStore(s => s.updateReward);
+  const deleteReward = useStore(s => s.deleteReward);
+  const transactions = useStore(s => s.transactions);
   const { toast } = useToast();
   const [selectedReward, setSelectedReward] = useState<Reward | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
