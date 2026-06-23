@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  # The Tally Frontend
+  tally-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # These are passed into the React build step.
+        # It connects the frontend to the local Supabase backend running below.
+        - VITE_SUPABASE_URL=http://localhost:54321
+        - VITE_SUPABASE_ANON_KEY=${LOCAL_SUPABASE_ANON_KEY}
+    ports:
+      - "3000:80"
+    restart: unless-stopped
+    depends_on:
+      - backend-setup
+
+  # Instead of managing 10+ Supabase microservices manually in this file,
+  # we use a lightweight setup container that triggers the official Supabase CLI
+  # to spin up the local backend stack natively using Docker.
+  backend-setup:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock # Allows the CLI to spin up the backend containers
+    command: >
+      sh -c "npm install -g supabase && supabase start"
