@@ -17,14 +17,13 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
   return (
     <aside className="hidden md:flex w-64 border-r border-white/40 flex-col justify-between py-8 px-6 bg-white/20 z-20 backdrop-blur-md shrink-0">
       <div className="flex flex-col items-start w-full">
-        <div className="flex items-center gap-3 mb-12 pl-2">
-          <motion.div 
-            whileHover={{ rotate: 10, scale: 1.05 }}
-            className="w-7 h-7 rounded-lg bg-slate-900 shadow-lg flex items-center justify-center text-white"
-          >
-            <span className="font-black text-sm">T</span>
-          </motion.div>
-          <span className="font-bold tracking-tight text-lg text-slate-900">Tally</span>
+        <div className="flex items-center mb-12 pl-2">
+          <motion.img 
+            src="/Logo-big-name.png"
+            alt="Tally Logo"
+            whileHover={{ scale: 1.05 }}
+            className="h-10 object-contain drop-shadow-sm"
+          />
         </div>
 
         <nav className="flex flex-col gap-1.5 w-full">

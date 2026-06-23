@@ -41,9 +41,7 @@ export function AuthScreen() {
         className="w-full max-w-md bg-white/40 backdrop-blur-xl border border-white/40 p-8 rounded-3xl shadow-xl"
       >
         <div className="flex flex-col items-center text-center mb-8">
-          <div className="w-12 h-12 rounded-xl bg-slate-900 shadow-lg flex items-center justify-center text-white mb-4">
-            <span className="font-black text-xl">T</span>
-          </div>
+          <img src="/Logo-square.png" alt="Tally Logo" className="w-16 h-16 object-contain mb-4 rounded-2xl drop-shadow-md" />
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">
             {isLogin ? 'Welcome back' : 'Create an account'}
           </h1>

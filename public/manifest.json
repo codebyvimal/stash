@@ -1,0 +1,27 @@
+{
+  "name": "Tally",
+  "short_name": "Tally",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/Logo-square.png",
+      "sizes": "1254x1254",
+      "type": "image/png"
+    },
+    {
+      "src": "/Logo-square.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/Logo-square.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

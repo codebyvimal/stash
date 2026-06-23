@@ -17,7 +17,7 @@ interface MobileNavProps {
 export function MobileNav({ activeTab, setActiveTab }: MobileNavProps) {
   return (
     <header className="md:hidden w-full px-6 pt-6 pb-2 flex justify-between items-center border-b border-white/20 z-20">
-      <span className="text-xs font-semibold tracking-widest uppercase opacity-40">Tally</span>
+      <img src="/Logo-big-name.png" alt="Tally Logo" className="h-6 object-contain" />
       <nav className="flex gap-4 text-sm font-medium text-slate-600">
         {navItems.map((item) => {
           const isActive = activeTab === item.id;
