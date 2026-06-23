@@ -55,14 +55,7 @@ const DEFAULT_SETTINGS: Settings = {
   currency_name: 'pts'
 };
 
-const DEFAULT_REWARDS: Reward[] = [
-  { id: crypto.randomUUID(), title: "Movie Night", pts: 300, category: "Movies", description: "Watch any movie you want", created_at: new Date().toISOString(), is_repeatable: true },
-  { id: crypto.randomUUID(), title: "1 hr Gaming", pts: 500, category: "Games", description: "Guilt-free gaming session", created_at: new Date().toISOString(), is_repeatable: true },
-  { id: crypto.randomUUID(), title: "Takeout Meal", pts: 800, category: "Food", description: "Order your favourite food", created_at: new Date().toISOString(), is_repeatable: true },
-  { id: crypto.randomUUID(), title: "Buy a Book", pts: 1000, category: "Learning", description: "Treat yourself to a new book", created_at: new Date().toISOString(), is_repeatable: false },
-  { id: crypto.randomUUID(), title: "Weekend Movie Marathon", pts: 1500, category: "Movies", description: "Full day of movies", created_at: new Date().toISOString(), is_repeatable: false },
-  { id: crypto.randomUUID(), title: "New PS5 Game", pts: 6000, category: "Games", description: "Buy a brand new game", created_at: new Date().toISOString(), is_repeatable: false }
-];
+const DEFAULT_REWARDS: Reward[] = [];
 
 const DEFAULT_DATA: Omit<StoreData, '_tick'> = {
   transactions: [],
