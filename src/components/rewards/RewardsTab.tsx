@@ -10,7 +10,7 @@ import { motion } from 'framer-motion';
 import { Gift, Plus, Archive, ChevronDown, ChevronUp } from 'lucide-react';
 
 export function RewardsTab() {
-  const { rewards, balance, settings, claimReward, addReward, deleteReward, transactions } = useStore();
+  const { rewards, balance, settings, claimReward, addReward, updateReward, deleteReward, transactions } = useStore();
   const { toast } = useToast();
   const [selectedReward, setSelectedReward] = useState<Reward | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -67,7 +67,6 @@ export function RewardsTab() {
   };
 
   const handleEditReward = (id: string, updates: Partial<Reward>) => {
-    // @ts-ignore
     updateReward(id, updates);
     toast('Reward updated successfully!', 'success');
   };
