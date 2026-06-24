@@ -1,20 +1,30 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense, lazy } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { AppShell } from './components/layout/AppShell';
 import { Sidebar } from './components/layout/Sidebar';
 import { MobileNav } from './components/layout/MobileNav';
 import { BalanceHeader } from './components/dashboard/BalanceHeader';
-import { TaskPlanner } from './components/dashboard/TaskPlanner';
-import { TaskList } from './components/dashboard/TaskList';
-import { RewardPreview } from './components/dashboard/RewardPreview';
-import { HistoryTab } from './components/history/HistoryTab';
-import { RewardsTab } from './components/rewards/RewardsTab';
-import { SettingsTab } from './components/settings/SettingsTab';
 import { useAuth } from './hooks/useAuth';
 import { AuthScreen } from './components/auth/AuthScreen';
 import { Loader2 } from 'lucide-react';
 import { useStore } from './hooks/useStore';
+
+// Lazy loaded components for code splitting
+const TaskPlanner = lazy(() => import('./components/dashboard/TaskPlanner').then(m => ({ default: m.TaskPlanner })));
+const TaskList = lazy(() => import('./components/dashboard/TaskList').then(m => ({ default: m.TaskList })));
+const RewardPreview = lazy(() => import('./components/dashboard/RewardPreview').then(m => ({ default: m.RewardPreview })));
+const HistoryTab = lazy(() => import('./components/history/HistoryTab').then(m => ({ default: m.HistoryTab })));
+const RewardsTab = lazy(() => import('./components/rewards/RewardsTab').then(m => ({ default: m.RewardsTab })));
+const SettingsTab = lazy(() => import('./components/settings/SettingsTab').then(m => ({ default: m.SettingsTab })));
+
+function LazyFallback() {
+  return (
+    <div className="flex flex-1 items-center justify-center p-8">
+      <Loader2 className="w-6 h-6 animate-spin text-slate-400 opacity-50" />
+    </div>
+  );
+}
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -69,19 +79,21 @@ export default function App() {
               transition={{ duration: 0.3 }}
               className="flex-1 flex flex-col max-w-3xl mx-auto w-full md:block space-y-6 md:space-y-0"
             >
-              {/* Balance + Daily Goal header */}
-              <BalanceHeader />
+              <Suspense fallback={<LazyFallback />}>
+                {/* Balance + Daily Goal header */}
+                <BalanceHeader />
 
-              {/* Task Planner (add tasks) */}
-              <TaskPlanner />
+                {/* Task Planner (add tasks) */}
+                <TaskPlanner />
 
-              <div className="flex flex-col md:grid md:grid-cols-2 gap-8 md:gap-12 pb-10 flex-1 mt-4 md:mt-8 pt-2">
-                {/* Tasks (pending + recently completed) */}
-                <TaskList />
+                <div className="flex flex-col md:grid md:grid-cols-2 gap-8 md:gap-12 pb-10 flex-1 mt-4 md:mt-8 pt-2">
+                  {/* Tasks (pending + recently completed) */}
+                  <TaskList />
 
-                {/* Rewards preview */}
-                <RewardPreview onViewCatalog={() => setActiveTab('rewards')} />
-              </div>
+                  {/* Rewards preview */}
+                  <RewardPreview onViewCatalog={() => setActiveTab('rewards')} />
+                </div>
+              </Suspense>
             </motion.div>
           )}
 
@@ -94,7 +106,9 @@ export default function App() {
               transition={{ duration: 0.3 }}
               className="h-full flex flex-col"
             >
-              <HistoryTab />
+              <Suspense fallback={<LazyFallback />}>
+                <HistoryTab />
+              </Suspense>
             </motion.div>
           )}
 
@@ -107,7 +121,9 @@ export default function App() {
               transition={{ duration: 0.3 }}
               className="h-full flex flex-col"
             >
-              <RewardsTab />
+              <Suspense fallback={<LazyFallback />}>
+                <RewardsTab />
+              </Suspense>
             </motion.div>
           )}
 
@@ -120,7 +136,9 @@ export default function App() {
               transition={{ duration: 0.3 }}
               className="h-full flex flex-col overflow-y-auto no-scrollbar"
             >
-              <SettingsTab />
+              <Suspense fallback={<LazyFallback />}>
+                <SettingsTab />
+              </Suspense>
             </motion.div>
           )}
         </AnimatePresence>
