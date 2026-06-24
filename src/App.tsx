@@ -9,6 +9,7 @@ import { useAuth } from './hooks/useAuth';
 import { AuthScreen } from './components/auth/AuthScreen';
 import { Loader2 } from 'lucide-react';
 import { useStore } from './hooks/useStore';
+import { AppTourModal } from './components/layout/AppTourModal';
 
 // Lazy loaded components for code splitting
 const TaskPlanner = lazy(() => import('./components/dashboard/TaskPlanner').then(m => ({ default: m.TaskPlanner })));
@@ -143,6 +144,8 @@ export default function App() {
           )}
         </AnimatePresence>
       </main>
+
+      <AppTourModal />
     </AppShell>
   );
 }

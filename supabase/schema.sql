@@ -60,8 +60,8 @@ create or replace function prevent_early_task_completion()
 returns trigger as $$
 begin
   if NEW.status = 'completed' and OLD.status = 'pending' then
-    if now() < OLD.created_at + interval '6 hours' then
-      raise exception 'Task cannot be completed before 6 hours from creation';
+    if now() < OLD.created_at + interval '3 hours' then
+      raise exception 'Task cannot be completed before 3 hours from creation';
     end if;
   end if;
   return NEW;
@@ -91,7 +91,7 @@ begin
   where user_id = uid 
     and status = 'completed' 
     and completed_at is not null
-    and now() >= created_at + interval '6 hours';
+    and now() >= created_at + interval '3 hours';
 
   return tx_balance + tasks_balance;
 end;

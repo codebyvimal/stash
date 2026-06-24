@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useStore } from '../../hooks/useStore';
-import { Save, Download, Trash2, Database, HardDrive } from 'lucide-react';
+import { Save, Download, Trash2, Database, HardDrive, Compass } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 export function SettingsTab() {
@@ -121,6 +121,20 @@ export function SettingsTab() {
             >
               <Save className="w-4 h-4" />
               Save Preferences
+            </button>
+          </div>
+        </section>
+
+        {/* Help */}
+        <section className="bg-white/40 p-5 rounded-2xl border border-white/40 shadow-sm backdrop-blur-md">
+          <h2 className="text-sm font-semibold tracking-wide text-slate-900 uppercase mb-4">Help & Support</h2>
+          <div className="space-y-4">
+            <button
+              onClick={() => useStore.getState().setTourOpen(true)}
+              className="flex items-center gap-2 px-4 py-2.5 bg-indigo-50 border border-indigo-100 text-indigo-700 rounded-xl font-medium hover:bg-indigo-100 transition-colors w-full"
+            >
+              <Compass className="w-4 h-4 text-indigo-500" />
+              Replay App Tour
             </button>
           </div>
         </section>

@@ -124,7 +124,7 @@ export function TaskPlanner() {
             exit={{ opacity: 0, y: -4 }}
             className="mt-2 text-[11px] text-slate-400 font-medium px-2"
           >
-            ⏱ Points credited 6 hours after task creation
+            ⏱ Points credited 3 hours after task creation
           </motion.p>
         ) : null}
       </AnimatePresence>

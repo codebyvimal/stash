@@ -124,10 +124,10 @@ export function TaskList() {
         message={
           confirmingTask ? (
             <span>
-              You must wait 6 hours after creating a task before you can complete it. It will unlock at{' '}
-              <strong>
-                {new Date(new Date(confirmingTask.created_at).getTime() + 6 * 60 * 60 * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              </strong>.
+              You must wait 3 hours after creating a task before you can complete it. It will unlock at{' '}
+              <span className="font-semibold text-slate-800">
+                {new Date(new Date(confirmingTask.created_at).getTime() + 3 * 60 * 60 * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </span>.
             </span>
           ) : null
         }

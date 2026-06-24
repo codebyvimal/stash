@@ -50,6 +50,7 @@ interface StoreData {
   settings: Settings;
   syncQueue: any[];
   _tick: number;
+  isTourOpen: boolean;
 }
 
 interface StoreActions {
@@ -66,11 +67,13 @@ interface StoreActions {
   initFromSupabase: () => Promise<void>;
   addToSyncQueue: (action: any) => void;
   processSyncQueue: () => Promise<void>;
+  setTourOpen: (isOpen: boolean) => void;
 }
 
 const DEFAULT_SETTINGS: Settings = {
   daily_goal: 500,
-  currency_name: 'pts'
+  currency_name: 'pts',
+  has_seen_tour: false
 };
 
 const DEFAULT_REWARDS: Reward[] = [];
@@ -80,16 +83,17 @@ const DEFAULT_DATA: Omit<StoreData, '_tick'> = {
   tasks: [],
   rewards: DEFAULT_REWARDS,
   settings: DEFAULT_SETTINGS,
-  syncQueue: []
+  syncQueue: [],
+  isTourOpen: false
 };
 
-const SIX_HOURS_MS = 6 * 60 * 60 * 1000;
+const THREE_HOURS_MS = 3 * 60 * 60 * 1000;
 
 export function getCreditTime(task: Task): string {
   if (!task.completed_at) return '';
   const createdAt = new Date(task.created_at).getTime();
   const completedAt = new Date(task.completed_at).getTime();
-  const earliestCredit = createdAt + SIX_HOURS_MS;
+  const earliestCredit = createdAt + THREE_HOURS_MS;
   return new Date(Math.max(completedAt, earliestCredit)).toISOString();
 }
 
@@ -255,12 +259,13 @@ export const useStore = create<StoreData & StoreActions>()(
         } catch (e) {
           console.error("Failed to sync from supabase", e);
         }
-      }
+      },
+      setTourOpen: (isOpen) => set({ isTourOpen: isOpen })
     }),
     {
       name: 'tally_data',
       partialize: (state) => {
-        const { _tick, ...rest } = state;
+        const { _tick, isTourOpen, ...rest } = state;
         return rest;
       }
     }

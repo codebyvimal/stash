@@ -11,7 +11,7 @@ export interface Transaction {
 }
 
 // A planned task that earns points when completed
-// 6-HOUR RULE: Points are only credited to balance after 6 hours from created_at,
+// 3-HOUR RULE: Points are only credited to balance after 3 hours from created_at,
 // even if the task is marked completed earlier.
 export interface Task {
   id: string;              // UUID
@@ -19,9 +19,9 @@ export interface Task {
   pts: number;             // Points to earn on completion
   category?: string;       // e.g. "Study", "Exercise", "Deep Work"
   status: 'pending' | 'completed';
-  created_at: string;      // ISO timestamp — the 6-hour window starts here
+  created_at: string;      // ISO timestamp — the 3-hour window starts here
   completed_at?: string;   // ISO timestamp — when the user marked it done
-  // Points are credited at: max(completed_at, created_at + 6h)
+  // Points are credited at: max(completed_at, created_at + 3h)
   // This is computed, not stored.
 }
 
@@ -41,4 +41,5 @@ export interface Reward {
 export interface Settings {
   daily_goal: number;      // Default: 500
   currency_name: string;   // Default: "pts" (user can rename)
+  has_seen_tour?: boolean; // Default: false
 }
