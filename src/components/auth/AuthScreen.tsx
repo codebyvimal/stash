@@ -41,6 +41,7 @@ export function AuthScreen() {
   };
 
   const handleGoogleLogin = async () => {
+    if (!supabase) return;
     try {
       setLoading(true);
       setError(null);
