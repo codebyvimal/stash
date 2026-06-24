@@ -27,7 +27,14 @@ export function AuthScreen() {
         // Optionally show "Check your email for confirmation link" message
       }
     } catch (err: any) {
-      setError(err.message || 'An error occurred during authentication.');
+      console.error('Authentication error:', err);
+      let errorMessage = err?.message || 'An error occurred during authentication.';
+      
+      if (errorMessage === '{}' || typeof errorMessage === 'object') {
+        errorMessage = 'Unable to complete authentication. Please try again later.';
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
