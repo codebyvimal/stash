@@ -23,8 +23,6 @@ You can try out Stash right now without installing anything!
 <div align="center">
   <img src="./public/screenshot-1.png" alt="Stash View 1" width="48%" />
   <img src="./public/screenshot-2.png" alt="Stash View 2" width="48%" />
-  <br><br>
-  <img src="./public/screenshot-3.png" alt="Stash View 3" width="70%" />
 </div>
 
 ## 🚀 Getting Started
