@@ -18,9 +18,15 @@ export function useAuth() {
       setLoading(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
+      // Re-sync data from Supabase when user signs in (handles sign-out + sign-in flow)
+      if (event === 'SIGNED_IN') {
+        import('../hooks/useStore').then(({ useStore }) => {
+          useStore.getState().initFromSupabase();
+        });
+      }
     });
 
     return () => subscription.unsubscribe();

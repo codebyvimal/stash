@@ -15,9 +15,17 @@ export function HistoryTab() {
   const [filter, setFilter] = useState<FilterType>('all');
 
   const groupedTransactions = useMemo(() => {
-    // Map completed tasks to HistoryItems
+    // Build a set of task IDs that already have a matching earn transaction
+    // (created by addTransaction when tasks are completed in Supabase mode).
+    // We only synthesize a HistoryItem for tasks that have NO corresponding transaction
+    // to avoid duplicates.
+    const taskIdsWithTransaction = new Set<string>(
+      transactions.filter(t => t.task_id != null).map(t => t.task_id as string)
+    );
+
+    // Map completed tasks to HistoryItems only when no transaction already covers them
     const completedTasks: HistoryItem[] = tasks
-      .filter(t => t.status === 'completed')
+      .filter(t => t.status === 'completed' && !taskIdsWithTransaction.has(t.id))
       .map(t => ({
         id: t.id,
         title: t.title,

@@ -9,15 +9,16 @@ export function QuickAddForm() {
   const addTransaction = useStore(s => s.addTransaction);
 
   const handleAddPts = () => {
-    if (ptsValue) {
-      addTransaction({ 
-        title: inputValue || 'Quick Add', 
-        pts: parseInt(ptsValue, 10), 
-        type: 'earn' 
-      });
-      setInputValue('');
-      setPtsValue('');
-    }
+    const pts = parseInt(ptsValue, 10);
+    if (!ptsValue || isNaN(pts) || pts < 1) return;
+
+    addTransaction({ 
+      title: inputValue.trim() || 'Quick Add', 
+      pts,
+      type: 'earn' 
+    });
+    setInputValue('');
+    setPtsValue('');
   };
 
   return (

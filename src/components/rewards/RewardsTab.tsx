@@ -25,8 +25,10 @@ export function RewardsTab() {
   const [showArchived, setShowArchived] = useState(false);
 
   const { activeRewards, archivedRewards } = useMemo(() => {
-    const claimedRewardIds = new Set(
-      transactions.filter(t => t.type === 'spend' && t.reward_id).map(t => t.reward_id)
+    const claimedRewardIds = new Set<string>(
+      transactions
+        .filter(t => t.type === 'spend' && t.reward_id != null)
+        .map(t => t.reward_id as string)
     );
 
     const active: Reward[] = [];

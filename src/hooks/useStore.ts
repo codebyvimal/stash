@@ -67,7 +67,7 @@ interface StoreActions {
   addReward: (r: Omit<Reward, 'id' | 'created_at'>) => void;
   updateReward: (id: string, updates: Partial<Reward>) => void;
   deleteReward: (id: string) => void;
-  claimReward: (rewardId: string) => void;
+  claimReward: (rewardId: string) => void; // Optimistic sync update; Supabase sync is fire-and-forget
   updateSettings: (s: Partial<Settings>) => void;
   clearAll: () => void;
   initFromSupabase: () => Promise<void>;
@@ -177,7 +177,7 @@ export const useStore = create<StoreData & StoreActions>()(
         }));
         deleteFromSupabase('rewards', id);
       },
-      claimReward: async (rewardId) => {
+      claimReward: (rewardId) => {
         const state = get();
         const reward = state.rewards.find(r => r.id === rewardId);
         if (!reward) return;
@@ -191,20 +191,24 @@ export const useStore = create<StoreData & StoreActions>()(
           id: crypto.randomUUID(),
           created_at: new Date().toISOString()
         };
-        
-        // Optimistic update
+
+        // Optimistic update — synchronous so Zustand picks it up immediately
         set(state => ({ transactions: [...state.transactions, newTx] }));
 
+        // Fire-and-forget async Supabase sync (outside the store action)
         if (supabase) {
           if (!navigator.onLine) {
             get().addToSyncQueue({ action: 'rpc', fn: 'claim_reward', args: { r_id: rewardId, tx_id: newTx.id } });
           } else {
-            const { error } = await supabase.rpc('claim_reward', { r_id: rewardId, tx_id: newTx.id });
-            if (error) {
-              console.error("Failed to claim reward:", error);
-              // Revert on error
-              set(state => ({ transactions: state.transactions.filter(t => t.id !== newTx.id) }));
-            }
+            supabase.rpc('claim_reward', { r_id: rewardId, tx_id: newTx.id }).then(({ error }) => {
+              if (error) {
+                console.error("Failed to claim reward:", error);
+                // Revert optimistic update on error
+                useStore.setState(state => ({
+                  transactions: state.transactions.filter(t => t.id !== newTx.id)
+                }));
+              }
+            });
           }
         }
       },

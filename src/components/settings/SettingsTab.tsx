@@ -68,8 +68,8 @@ export function SettingsTab() {
               </div>
               <button
                 onClick={async () => {
-                  await supabase?.auth.signOut();
-                  clearAll();
+                  const { error } = await supabase!.auth.signOut();
+                  if (!error) clearAll();
                 }}
                 className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-200 transition-colors"
               >
