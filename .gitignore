@@ -24,3 +24,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Internal AI context and statuses
+Context.md
+stash.md
+supabase-status.json

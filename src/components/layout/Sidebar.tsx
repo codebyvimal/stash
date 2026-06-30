@@ -24,7 +24,7 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
         <div className="flex items-center mb-12 pl-2">
           <motion.img 
             src="/Logo-big-name.png"
-            alt="Tally Logo"
+            alt="Stash Logo"
             whileHover={{ scale: 1.05 }}
             className="h-10 object-contain drop-shadow-sm"
           />

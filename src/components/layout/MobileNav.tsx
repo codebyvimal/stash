@@ -21,7 +21,7 @@ export function MobileNav({ activeTab, setActiveTab }: MobileNavProps) {
 
   return (
     <header className="md:hidden w-full px-6 pt-6 pb-2 flex justify-between items-center border-b border-white/20 z-20">
-      <img src="/Logo-big-name.png" alt="Tally Logo" className="h-6 object-contain" />
+      <img src="/Logo-big-name.png" alt="Stash Logo" className="h-6 object-contain" />
       <nav className="flex gap-4 text-sm font-medium text-slate-600 items-center">
         {showTour && (
           <button

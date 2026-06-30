@@ -69,7 +69,7 @@ export function AuthScreen() {
         className="w-full max-w-md bg-white/40 backdrop-blur-xl border border-white/40 p-8 rounded-3xl shadow-xl"
       >
         <div className="flex flex-col items-center text-center mb-8">
-          <img src="/Logo-square.png" alt="Tally Logo" className="w-16 h-16 object-contain mb-4 rounded-2xl drop-shadow-md" />
+          <img src="/Logo-square.png" alt="Stash Logo" className="w-16 h-16 object-contain mb-4 rounded-2xl drop-shadow-md" />
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">
             {isLogin ? 'Welcome back' : 'Create an account'}
           </h1>

@@ -1,8 +1,8 @@
 version: '3.8'
 
 services:
-  # The Tally Frontend
-  tally-app:
+  # The Stash Frontend
+  stash-app:
     build:
       context: .
       dockerfile: Dockerfile

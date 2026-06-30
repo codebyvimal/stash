@@ -1,7 +1,7 @@
 {
-  "name": "Tally",
-  "short_name": "Tally",
-  "start_url": "/",
+  "name": "Stash",
+  "short_name": "Stash",
+  "start_url": ".",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",

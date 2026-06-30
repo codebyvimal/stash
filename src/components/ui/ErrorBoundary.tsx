@@ -21,7 +21,7 @@ export class ErrorBoundary extends Component<Props, State> {
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error("Uncaught error:", error, errorInfo);
     // Clear potentially corrupted local storage
-    localStorage.removeItem('tally_data');
+    localStorage.removeItem('stash_data');
   }
 
   public render() {

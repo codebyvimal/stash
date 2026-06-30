@@ -1,68 +1,76 @@
-# Tally
+<div align="center">
+  <img src="./public/Logo-big-name.png" alt="Stash Logo" width="300" />
+  
+  <p><strong>A sleek, personal productivity and self-gamification app.</strong><br>
+  <em>Turn your tasks into a rewarding personal economy!</em></p>
 
-Tally is a personal **self-gamification and productivity rewards app**.
+  <p>
+    <a href="https://stash-vimalarul.vercel.app/"><strong>Live Demo</strong></a> ·
+    <a href="#-getting-started"><strong>Self-Hosting</strong></a> ·
+    <a href="#-tech-stack"><strong>Tech Stack</strong></a>
+  </p>
+</div>
 
-Turn your daily tasks into a personal economy:
-1. **Plan tasks** and assign them a point value.
-2. **Complete tasks** to start a 6-hour credit countdown.
-3. **Earn points** once the countdown finishes.
-4. **Spend points** on real-life rewards you define (watch a movie, play games, buy something, etc.).
+---
 
-Your balance is the live score of your discipline — you only get to enjoy rewards you've earned!
+## 🌐 Live App
 
-## 🚀 Quick Deploy
+You can try out Stash right now without installing anything! 
+**Play with the live version here:** [https://stash-vimalarul.vercel.app/](https://stash-vimalarul.vercel.app/)
 
-You can deploy your own instance of Tally for free using Vercel and Supabase.
+## 📸 Screenshots
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fyour-username%2Ftally-app&env=VITE_SUPABASE_URL,VITE_SUPABASE_ANON_KEY)
+<div align="center">
+  <img src="./public/screenshot-1.png" alt="Stash View 1" width="48%" />
+  <img src="./public/screenshot-2.png" alt="Stash View 2" width="48%" />
+  <br><br>
+  <img src="./public/screenshot-3.png" alt="Stash View 3" width="70%" />
+</div>
 
-### Backend Setup (Supabase)
+## 🚀 Getting Started
 
-To enable cloud sync and multi-device access, you need to set up a Supabase project:
+There are two ways to run Stash yourself, depending on your needs:
 
-1. Create a free project at [Supabase](https://supabase.com/).
-2. Go to the **SQL Editor** in your Supabase dashboard.
-3. Copy the contents of `supabase/schema.sql` from this repository and run it to create your tables and security policies.
-4. Go to **Project Settings -> API**.
-5. Copy your `Project URL` and `anon public` key.
-6. Provide these keys when deploying to Vercel (or add them to your local `.env.local` file).
+### 🐳 1. Self-Hosting (Docker)
+**Best for:** Running your own permanent, production-ready instance. 
+This method spins up the optimized frontend and a local Supabase database behind the scenes in one command.
 
-### Local Storage Mode (No Backend)
-
-If you don't provide Supabase environment variables, Tally will automatically fall back to **Local Storage Mode**.
-All your tasks, transactions, and rewards will be saved securely in your browser's local storage. This is perfect for single-device usage without needing to set up any database!
-
-## 💻 Local Development
-
-1. Clone the repository:
+1. Install [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/).
+2. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/tally-app.git
-   cd tally-app
+   git clone https://github.com/your-username/stash.git
+   cd stash
    ```
-2. Install dependencies:
+3. Run the app:
+   ```bash
+   docker-compose up --build -d
+   ```
+4. Access Stash at `http://localhost:3000`.
+
+### 💻 2. Local Development (Node.js)
+**Best for:** Modifying the code, fixing bugs, or adding new features to the app. 
+This runs a fast development server with hot-reloading. Data is stored securely in your browser (Local Storage Mode).
+
+1. Install dependencies:
    ```bash
    npm install
    ```
-3. (Optional) Create a `.env.local` file using the template:
-   ```bash
-   cp .env.example .env.local
-   ```
-   Add your Supabase keys if you want cloud sync.
-4. Start the development server:
+2. Start the Vite dev server:
    ```bash
    npm run dev
    ```
+3. Access Stash at `http://localhost:5173`.
 
 ## 🛠️ Tech Stack
 
-- **Framework:** React 19 + TypeScript
-- **Build Tool:** Vite
+- **Framework:** React 19 + TypeScript (Vite)
 - **Styling:** Tailwind CSS (Glassmorphism design)
+- **State:** Zustand
 - **Animations:** Framer Motion
 - **Icons:** Lucide React
-- **Database / Auth:** Supabase (Optional)
-- **Deployment:** Vercel
+- **Backend:** Supabase (Optional)
+- **Deployment:** Docker & Vercel Ready
 
 ## 📜 License
 
-MIT
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

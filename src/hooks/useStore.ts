@@ -269,7 +269,7 @@ export const useStore = create<StoreData & StoreActions>()(
       setTourOpen: (isOpen) => set({ isTourOpen: isOpen })
     }),
     {
-      name: 'tally_data',
+      name: 'stash_data',
       partialize: (state) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { _tick, isTourOpen, ...rest } = state;
