@@ -36,6 +36,7 @@ export function TaskList() {
   const allDisplayed = [...pendingTasks, ...recentCompleted];
 
   const handleComplete = (task: Task) => {
+    // eslint-disable-next-line react-hooks/purity
     const now = Date.now();
     const createdAt = new Date(task.created_at).getTime();
     const earliestCredit = createdAt + 6 * 60 * 60 * 1000;

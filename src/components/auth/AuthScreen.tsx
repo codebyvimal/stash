@@ -26,9 +26,10 @@ export function AuthScreen() {
         if (error) throw error;
         // Optionally show "Check your email for confirmation link" message
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Authentication error:', err);
-      let errorMessage = err?.message || 'An error occurred during authentication.';
+      const errObj = err as { message?: string };
+      let errorMessage = err instanceof Error ? err.message : errObj?.message || 'An error occurred during authentication.';
       
       if (errorMessage === '{}' || typeof errorMessage === 'object') {
         errorMessage = 'Unable to complete authentication. Please try again later.';
@@ -52,9 +53,10 @@ export function AuthScreen() {
         }
       });
       if (error) throw error;
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Google Auth error:', err);
-      setError(err?.message || 'An error occurred during Google authentication.');
+      const errObj = err as { message?: string };
+      setError(err instanceof Error ? err.message : errObj?.message || 'An error occurred during Google authentication.');
       setLoading(false);
     }
   };

@@ -5,11 +5,10 @@ import type { User, Session } from '@supabase/supabase-js';
 export function useAuth() {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!!supabase);
 
   useEffect(() => {
     if (!supabase) {
-      setLoading(false);
       return;
     }
 

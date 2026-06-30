@@ -3,12 +3,13 @@ import { persist } from 'zustand/middleware';
 import type { Transaction, Task, Reward, Settings } from '../types';
 import { supabase } from '../lib/supabase';
 
-const pushToSupabase = async (table: string, data: any) => {
+const pushToSupabase = async <T extends object>(table: string, data: T) => {
   if (!supabase) return;
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return;
   
-  const { is_repeatable, ...payload } = data;
+  const payload = { ...data } as Record<string, unknown>;
+  delete payload.is_repeatable;
   
   if (!navigator.onLine) {
     useStore.getState().addToSyncQueue({ action: 'upsert', table, data: payload });
@@ -43,12 +44,17 @@ const deleteFromSupabase = async (table: string, id: string) => {
   }
 };
 
+type SyncAction = 
+  | { action: 'upsert'; table: string; data: Record<string, unknown> }
+  | { action: 'delete'; table: string; id: string }
+  | { action: 'rpc'; fn: string; args: Record<string, unknown> };
+
 interface StoreData {
   transactions: Transaction[];
   tasks: Task[];
   rewards: Reward[];
   settings: Settings;
-  syncQueue: any[];
+  syncQueue: SyncAction[];
   _tick: number;
   isTourOpen: boolean;
 }
@@ -65,7 +71,7 @@ interface StoreActions {
   updateSettings: (s: Partial<Settings>) => void;
   clearAll: () => void;
   initFromSupabase: () => Promise<void>;
-  addToSyncQueue: (action: any) => void;
+  addToSyncQueue: (action: SyncAction) => void;
   processSyncQueue: () => Promise<void>;
   setTourOpen: (isOpen: boolean) => void;
 }
@@ -229,7 +235,7 @@ export const useStore = create<StoreData & StoreActions>()(
              } else if (item.action === 'rpc') {
                 await supabase.rpc(item.fn, item.args);
              }
-           } catch(e) {
+           } catch {
              get().addToSyncQueue(item);
            }
         }
@@ -265,6 +271,7 @@ export const useStore = create<StoreData & StoreActions>()(
     {
       name: 'tally_data',
       partialize: (state) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { _tick, isTourOpen, ...rest } = state;
         return rest;
       }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Trash2 } from 'lucide-react';
 
@@ -20,8 +20,10 @@ export function EditRewardModal({ reward, isOpen, onClose, onEdit, onDelete, cur
   const [description, setDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [isRepeatable, setIsRepeatable] = useState(true);
+  const [prevReward, setPrevReward] = useState(reward);
 
-  useEffect(() => {
+  if (reward !== prevReward) {
+    setPrevReward(reward);
     if (reward) {
       setTitle(reward.title);
       setPts(reward.pts.toString());
@@ -30,7 +32,7 @@ export function EditRewardModal({ reward, isOpen, onClose, onEdit, onDelete, cur
       setImageUrl(reward.image_url || '');
       setIsRepeatable(reward.is_repeatable || false);
     }
-  }, [reward]);
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
