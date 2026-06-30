@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./public/Logo-big-name.png" alt="Stash Logo" width="300" />
+  <img src="./public/Logo-big-name-white.png" alt="Stash Logo" width="300" />
   
   <p><strong>A sleek, personal productivity and self-gamification app.</strong><br>
   <em>Turn your tasks into a rewarding personal economy!</em></p>
