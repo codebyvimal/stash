@@ -26,6 +26,5 @@ dist-ssr
 *.sw?
 
 # Internal AI context and statuses
-Context.md
-stash.md
-supabase-status.json
+docs/
+supabase/supabase-status.json
